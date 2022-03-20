@@ -1,7 +1,11 @@
 class BooksController < ApplicationController
 
+  before_action :verifi_datauser_loginuser_mdlbook, only: [:edit, :update]
+
   def show
     @book = Book.find(params[:id])
+    @user = @book.user
+    @book_r = Book.new
   end
 
   def index
@@ -34,9 +38,9 @@ class BooksController < ApplicationController
     end
   end
 
-  def delete
+  def destroy
     @book = Book.find(params[:id])
-    @book.destoy
+    @book.destroy
     redirect_to books_path
   end
 
@@ -45,4 +49,11 @@ class BooksController < ApplicationController
   def book_params
     params.require(:book).permit(:title, :body)
   end
+
+  def verifi_datauser_loginuser_mdlbook
+    unless current_user.id.to_s == Book.find_by(id: params[:id]).user_id.to_s
+      redirect_to books_path
+    end
+  end
+
 end
